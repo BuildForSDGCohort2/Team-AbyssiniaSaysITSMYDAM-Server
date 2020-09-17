@@ -51,13 +51,41 @@ module.exports = {
         }
       },
     ),
+    updateProduct: combineResolvers(
+      isAuthenitcated,
+      isProductOwner,
+      async (_, { id, productToBeUpdated }, { models: { Product } }) => {
+        try {
+          const product = await Product.findByIdAndUpdate(id, productToBeUpdated);
+          return product;
+        } catch (err) {
+          throw new Error(err);
+        }
+      },
+    ),
   },
 
   Query: {
-    async products(parent, args, { models: { Product } }) {
+    async products(_, { filter }, { models: { Product } }) {
       try {
         const products = await Product.find();
-        return products;
+        if (!filter) {
+          return products;
+        }
+        return products.filter((product) => {
+          const productName = product.productName.toLowerCase().includes(filter);
+          const group = product.uniqueAttributes.group.toLowerCase().includes(filter);
+          const uniqueName = product.uniqueAttributes.uniqueName.toLowerCase().includes(filter);
+          return productName || group || uniqueName;
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    async product(_, { id }, { models: { Product } }) {
+      try {
+        const product = await Product.findById(id);
+        return product;
       } catch (err) {
         throw new Error(err);
       }

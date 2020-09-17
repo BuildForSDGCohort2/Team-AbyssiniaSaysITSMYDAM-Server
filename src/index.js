@@ -30,6 +30,7 @@ const getCurrentUser = async (req) => {
     if (token) {
       try {
         const user = await jwt.verify(token, process.env.SECRET);
+        console.log(user);
         return user;
       } catch (e) {
         return null;
@@ -56,6 +57,7 @@ const server = new ApolloServer({
 mongoose
   .connect(process.env.MONGO_ATLAS_DB_CONNECTION_STRING, {
     useNewUrlParser: true,
+    useFindAndModify: false,
   })
   .then(() => {
     console.log('Mongo db connected!');

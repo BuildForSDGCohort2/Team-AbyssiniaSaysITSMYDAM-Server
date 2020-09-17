@@ -7,9 +7,14 @@ module.exports = gql`
       company: CompanyInput!
     ): Product!
     deleteProductPost(id: ID!): String!
+    updateProduct(
+      id: ID!
+      productToBeUpdated: updateProductInput!
+    ): Product!
   }
   extend type Query {
-    products: [Product!]
+    products(filter:String): [Product!]
+    product(id:ID!): Product!
   }
   type Product {
     id: ID!
@@ -28,6 +33,11 @@ module.exports = gql`
   input ProductInput {
     productName: String!
     uniqueAttributes: ProductUniqueAttributesInput!
+  }
+
+  input updateProductInput {
+    productName: String
+    uniqueAttributes: ProductUniqueAttributesInput
   }
 
   input ProductUniqueAttributesInput {
